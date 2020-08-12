@@ -5,6 +5,9 @@ networks:
     name: kafka-net
     driver: bridge
 
+volumes:
+  flink-checkpoints-directory:
+
 services:
   zk1:
     image: zookeeper
@@ -199,5 +202,40 @@ services:
       PORT: 9002
     depends_on:
       - kafka-rest-proxy
+    networks:
+      - kafka-net
+
+
+  jobmanager:
+    image: flink:1.11.0-scala_2.11
+    hostname: jobmanager
+    ports:
+      - "8081:8081"
+    command: "jobmanager.sh start-foreground"
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: jobmanager
+    volumes:
+      - ./conf:/opt/flink/conf
+      - flink-checkpoints-directory:/tmp/flink-checkpoints-directory
+      - /tmp/flink-savepoints-directory:/tmp/flink-savepoints-directory
+    networks:
+      - kafka-net
+
+  taskmanager:
+    image: flink:1.11.0-scala_2.11
+    depends_on:
+      - jobmanager
+    command: "taskmanager.sh start-foreground"
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: jobmanager
+        taskmanager.numberOfTaskSlots: 2
+    volumes:
+      - ./conf:/opt/flink/conf
+      - flink-checkpoints-directory:/tmp/flink-checkpoints-directory
+      - /tmp/flink-savepoints-directory:/tmp/flink-savepoints-directory
     networks:
       - kafka-net
