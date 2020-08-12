@@ -29,6 +29,8 @@ description = """Flink Quickstart Job"""
 
 ext {
     javaVersion = '1.8'
+    junitVersion = '5.6.2'
+    mockitoVersion = '3.4.6'
     flinkVersion = '1.11.0'
     scalaBinaryVersion = '2.11'
     slf4jVersion = '1.7.15'
@@ -87,8 +89,17 @@ dependencies {
     compile "org.apache.logging.log4j:log4j-slf4j-impl:${log4jVersion}"
     compile "org.slf4j:slf4j-log4j12:${slf4jVersion}"
     compile group: 'org.apache.flink', name: 'flink-connector-kafka_2.11', version: '1.11.0'
+
+
     // Add test dependencies here.
-    // testCompile "junit:junit:4.12"
+    testCompile "junit:junit:$junitVersion"
+    testCompile "org.mockito:mockito-all:$mockitoVersion"
+    testCompile "org.assertj:assertj-core:3.16.1"
+
+
+    testCompile "org.apache.flink:flink-test-utils_$scalaBinaryVersion:$flinkVersion"
+    testCompile "org.apache.flink:flink-runtime_$scalaBinaryVersion:$flinkVersion:tests"
+    testCompile "org.apache.flink:flink-streaming-java_$scalaBinaryVersion:$flinkVersion:tests"
 }
 
 // make compileOnly dependencies available for tests:
