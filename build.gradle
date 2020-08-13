@@ -16,6 +16,10 @@ buildscript {
 plugins {
     id 'java'
     id 'application'
+
+    // provide pretty output for tests
+    id 'com.adarshr.test-logger' version '2.0.0'
+
     // shadow plugin to produce fat JARs
     id 'com.github.johnrengelman.shadow' version '5.2.0'
 }
@@ -68,6 +72,11 @@ configurations {
     flinkShadowJar.exclude group: 'com.google.code.findbugs', module: 'jsr305'
     flinkShadowJar.exclude group: 'org.slf4j'
     flinkShadowJar.exclude group: 'org.apache.logging.log4j'
+}
+
+testlogger {
+    theme 'mocha'
+    slowThreshold 5000
 }
 
 test {
