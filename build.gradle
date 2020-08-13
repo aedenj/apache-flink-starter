@@ -70,6 +70,14 @@ configurations {
     flinkShadowJar.exclude group: 'org.apache.logging.log4j'
 }
 
+test {
+    useJUnitPlatform()
+
+    testLogging {
+      events "passed", "skipped", "failed"
+    }
+}
+
 // declare the dependencies for your production and test code
 dependencies {
     // --------------------------------------------------------------
@@ -92,8 +100,10 @@ dependencies {
 
 
     // Add test dependencies here.
-    testCompile "junit:junit:$junitVersion"
-    testCompile "org.mockito:mockito-all:$mockitoVersion"
+    //testCompile "junit:junit:$junitVersion"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+    //testCompile "org.mockito:mockito-all:$mockitoVersion"
     testCompile "org.assertj:assertj-core:3.16.1"
 
 
