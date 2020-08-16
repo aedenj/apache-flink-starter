@@ -13,16 +13,16 @@ import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer;
 /**
  * Empty class comment.
  */
-public class StreamingJob {
+public final class StreamingJob {
     private StreamingJob() {
         // prevents calls from subclass
         throw new UnsupportedOperationException();
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        final Properties properties = new Properties();
 
+        final Properties properties = new Properties();
         properties.setProperty("bootstrap.servers", "localhost:9092,localhost:9093,localhost:9094");
 
         final FlinkKafkaConsumer<String> myConsumer = new FlinkKafkaConsumer<>(
