@@ -7,9 +7,11 @@
 buildscript {
     repositories {
         jcenter() // this applies only to the Gradle 'Shadow' plugin
+        gradlePluginPortal()
     }
     dependencies {
         classpath 'com.github.jengelman.gradle.plugins:shadow:5.2.0'
+        classpath 'ru.vyarus:gradle-quality-plugin:4.3.0'
     }
 }
 
@@ -17,11 +19,14 @@ plugins {
     id 'java'
     id 'application'
 
-    // provide pretty output for tests
+    // provide pretty output to the console for tests
     id 'com.adarshr.test-logger' version '2.0.0'
 
     // shadow plugin to produce fat JARs
     id 'com.github.johnrengelman.shadow' version '5.2.0'
+
+    // http://xvik.github.io/gradle-quality-plugin/4.3.0/getting-started/
+    id 'ru.vyarus.quality' version '4.3.0' // no config out of the box
 }
 
 
@@ -34,7 +39,6 @@ description = """Flink Quickstart Job"""
 ext {
     javaVersion = '1.8'
     junitVersion = '5.6.2'
-    mockitoVersion = '3.4.6'
     flinkVersion = '1.11.0'
     scalaBinaryVersion = '2.11'
     slf4jVersion = '1.7.15'
@@ -74,6 +78,8 @@ configurations {
     flinkShadowJar.exclude group: 'org.apache.logging.log4j'
 }
 
+
+// For details see https://github.com/radarsh/gradle-test-logger-plugin
 testlogger {
     theme 'mocha'
     slowThreshold 5000
@@ -94,6 +100,7 @@ dependencies {
     // shadow jar and are provided in the lib folder of Flink
     // --------------------------------------------------------------
     compile "org.apache.flink:flink-streaming-java_${scalaBinaryVersion}:${flinkVersion}"
+    compile "org.apache.flink:flink-runtime-web_$scalaBinaryVersion:$flinkVersion"
 
     // --------------------------------------------------------------
     // Dependencies that should be part of the shadow jar, e.g.
@@ -112,8 +119,8 @@ dependencies {
     //testCompile "junit:junit:$junitVersion"
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
-    //testCompile "org.mockito:mockito-all:$mockitoVersion"
-    testCompile "org.assertj:assertj-core:3.16.1"
+    testCompile group: 'org.mockito', name: 'mockito-core', version: '3.4.6'
+    testCompile group: 'org.assertj', name:'assertj-core', version: '3.16.1'
 
 
     testCompile "org.apache.flink:flink-test-utils_$scalaBinaryVersion:$flinkVersion"

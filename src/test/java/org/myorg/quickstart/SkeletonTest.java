@@ -8,4 +8,9 @@ public class SkeletonTest {
   public void TheAnswerToLife() {
     assertThat(42).isEqualTo(Integer.sum(19,23));
   }
+
+  @Test
+  public void AlwaysRight() {
+    assertThat(true).isEqualTo(true);
+  }
 }
