@@ -24,6 +24,7 @@ public final class StreamingJob {
 
         final Properties properties = new Properties();
         properties.setProperty("bootstrap.servers", "localhost:9092,localhost:9093,localhost:9094");
+        properties.setProperty("group.id", "test");
 
         final FlinkKafkaConsumer<String> myConsumer = new FlinkKafkaConsumer<>(
             "messages",
@@ -31,7 +32,7 @@ public final class StreamingJob {
             properties
         );
 
-        final DataStream<String> raw = env.addSource(myConsumer).name("Raw Messages Topic");
+        final DataStream<String> msgs = env.addSource(myConsumer).name("Raw Messages Topic");
 
         final FlinkKafkaProducer<String> enriched = new FlinkKafkaProducer<>(
             "enriched-messages",
@@ -39,7 +40,7 @@ public final class StreamingJob {
             properties
         );
 
-        raw.addSink(enriched).name("Enriched Messages Topic");
+        msgs.addSink(enriched).name("Enriched Messages Topic");
 
         env.execute("Kafka Experiment");
     }
