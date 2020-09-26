@@ -11,7 +11,7 @@ multi-node Kafka cluster and a Flink session cluster all under Docker.
 
     + [Mac](https://download.docker.com/mac/stable/Docker.dmg)
 
-1. [Gradle] - You have a few options here
+1. [Gradle](https://gradle.org) - You have a few options here
     + If you're using Intellij, just make sure it's enabled.
     + Run `brew install gradle`
 
