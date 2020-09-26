@@ -23,25 +23,24 @@ public final class StreamingJob {
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
         final Properties properties = new Properties();
-        properties.setProperty("bootstrap.servers", "localhost:9092,localhost:9093,localhost:9094");
+        properties.setProperty("bootstrap.servers", "localhost:9092, broker-1:19092");
         properties.setProperty("group.id", "test");
 
         final FlinkKafkaConsumer<String> myConsumer = new FlinkKafkaConsumer<>(
-            "messages",
+            "source",
             new SimpleStringSchema(),
             properties
         );
 
-        final DataStream<String> msgs = env.addSource(myConsumer).name("Raw Messages Topic");
+        final DataStream<String> msgs = env.addSource(myConsumer).name("Raw Messages Again");
 
         final FlinkKafkaProducer<String> enriched = new FlinkKafkaProducer<>(
-            "enriched-messages",
+            "destination",
             new SimpleStringSchema(),
             properties
         );
 
         msgs.addSink(enriched).name("Enriched Messages Topic");
-
         env.execute("Kafka Experiment");
     }
 }

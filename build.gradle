@@ -20,19 +20,22 @@ plugins {
     id 'application'
 
     // provide pretty output to the console for tests
-    id 'com.adarshr.test-logger' version '2.0.0'
+    id 'com.adarshr.test-logger' version '2.1.0'
 
     // shadow plugin to produce fat JARs
     id 'com.github.johnrengelman.shadow' version '5.2.0'
 
     // http://xvik.github.io/gradle-quality-plugin/4.3.0/getting-started/
     id 'ru.vyarus.quality' version '4.3.0' // no config out of the box
+
+    //https://github.com/kordamp/livereload-gradle-plugin
+    id 'org.kordamp.gradle.livereload' version '0.3.0'
 }
 
 
 // artifact properties
 group = 'org.myorg.quickstart'
-version = '0.1-SNAPSHOT'
+version = '1.0'
 mainClassName = 'org.myorg.quickstart.StreamingJob'
 description = """Flink Quickstart Job"""
 
@@ -45,6 +48,25 @@ ext {
     log4jVersion = '2.12.1'
 }
 
+liveReload {
+    // Set docRoot as the base directory for
+    // the livereload server to watch for changes.
+    // We choose the output directory of the
+    // processResources task, because it will contain
+    // the changed files if we run our application
+    // with Gradle's continuous support ($ gradle -t run).
+    // In another terminal we need to start this
+    // task ($ gradle liveReload).
+    docRoot "build/libs"
+}
+
+task submitJob(type: Exec) {
+  commandLine "./submit-job.sh"
+}
+
+task createTopics(type: Exec) {
+  commandLine "./create-topics.sh"
+}
 
 sourceCompatibility = javaVersion
 targetCompatibility = javaVersion
@@ -83,6 +105,7 @@ configurations {
 testlogger {
     theme 'mocha'
     slowThreshold 5000
+    logLevel 'QUIET'
 }
 
 test {
@@ -113,7 +136,6 @@ dependencies {
     compile "org.apache.logging.log4j:log4j-slf4j-impl:${log4jVersion}"
     compile "org.slf4j:slf4j-log4j12:${slf4jVersion}"
     compile group: 'org.apache.flink', name: 'flink-connector-kafka_2.11', version: '1.11.0'
-
 
     // Add test dependencies here.
     //testCompile "junit:junit:$junitVersion"
@@ -149,5 +171,7 @@ jar {
 }
 
 shadowJar {
+    baseName 'flink-stream-job'
+    zip64 true
     configurations = [project.configurations.flinkShadowJar]
 }
