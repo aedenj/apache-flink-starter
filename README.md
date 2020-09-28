@@ -1,7 +1,7 @@
 Apache Flink Starter
 ===================
 A starting point for an [Apache Flink](https://ci.apache.org/projects/flink/flink-docs-master/) with a
-multi-node Kafka cluster and a Flink session cluster all under Docker.
+multi-node Kafka cluster and a Flink job cluster all under Docker.
 
 
 
@@ -21,10 +21,10 @@ To get going run,
 
 ```
 git clone git@github.com:aedenj/apache-flink-starter.git ~/projects/apache-flink-starter
-cd ~/projects/apache-flink-starter;docker-compose up
+cd ~/projects/apache-flink-starter;./gradlew build;docker-compose up
 ```
 
-Now you have a multi-node Kafka cluster and Flink session cluster.
+Now you have a multi-node Kafka cluster and Flink job cluster.
 
 ## Running Your App
 
@@ -36,28 +36,13 @@ There are a couple of ways of running your job depending on what you're trying t
 For quick feedback it's easiest to run the locally,
 
 1. If you're using Intellij, use the usual methods.
-1. On the command line run ./gradlew -t shadowJar run. [TODO: Live Reload]
+1. On the command line run `./gradlew shadowJar run`
 
-### Use the Cluster UI
+### Using the Job Cluster
 
-1. [Naviate](http://localhost:8081/#/submit) to the Flink UI
-1. Click on the `+ Add` button in the upper righthand corner and upload it.
-1. Once the job has appeared click on it and hit submit.
-1. Go check on your job on the [Running Jobs](http://localhost:8081/#/jobs/running) page.
-
-### Flink CLI
-You can submit your job to the session cluster using the [Flink CLI](https://ci.apache.org/projects/flink/flink-docs-stable/ops/cli.html). There's a
-fews ways of accomplishing that.
-
-1. Run `./gradlew submitJob`
-1. `docker run --rm -v "$PWD":/app -w /app --network kafka-net flink:latest flink run -d -m jobmanager:8081 ./build/libs/flink-stream-job-1.0-all.jar
+Run `./gradlew shadowJar startJob`. This will run the job under the job cluster in `docker-compose.yml`.
 
 
-We can make option two a little easier with an alias
+## Live Reload
 
-```
-alias flinkd='docker run --rm -v "$PWD":/app -w /app --network kafka-net flink:latest flink'
-```
-
-Refresh your terminal and just run `flinkd run -d -m jobmanager:8081 ./build/libs/flink-stream-job-1.0-all.jar
-
+On the command line run `./gradlew -t shadowJar startJob`. This approach attempts to simulate live reload using Gradle's `-t` flag by restarting the containers of the Flink job cluster in `docker-compose.yml`.
