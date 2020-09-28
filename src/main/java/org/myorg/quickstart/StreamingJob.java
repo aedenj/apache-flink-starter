@@ -40,7 +40,8 @@ public final class StreamingJob {
             properties
         );
 
-        msgs.addSink(enriched).name("Enriched Messages Topic");
+        System.out.println("HELLO WARRIOR AGAIN");
+        msgs.addSink(enriched).name("Destination Topics");
         env.execute("Kafka Experiment");
     }
 }

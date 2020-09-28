@@ -211,12 +211,14 @@ services:
     hostname: jobmanager
     ports:
       - "8081:8081"
-    command: "jobmanager.sh start-foreground"
+    command: "standalone-job"
     environment:
       - |
         FLINK_PROPERTIES=
         jobmanager.rpc.address: jobmanager
+        parallelism.default: 2
     volumes:
+      - ./build/libs:/opt/flink/usrlib
       - ./conf:/opt/flink/conf
       - flink-checkpoints-directory:/tmp/flink-checkpoints-directory
       - /tmp/flink-savepoints-directory:/tmp/flink-savepoints-directory
@@ -233,7 +235,9 @@ services:
         FLINK_PROPERTIES=
         jobmanager.rpc.address: jobmanager
         taskmanager.numberOfTaskSlots: 2
+        parallelism.default: 2
     volumes:
+      - ./build/libs:/opt/flink/usrlib
       - ./conf:/opt/flink/conf
       - flink-checkpoints-directory:/tmp/flink-checkpoints-directory
       - /tmp/flink-savepoints-directory:/tmp/flink-savepoints-directory

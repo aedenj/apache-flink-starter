@@ -27,9 +27,6 @@ plugins {
 
     // http://xvik.github.io/gradle-quality-plugin/4.3.0/getting-started/
     id 'ru.vyarus.quality' version '4.3.0' // no config out of the box
-
-    //https://github.com/kordamp/livereload-gradle-plugin
-    id 'org.kordamp.gradle.livereload' version '0.3.0'
 }
 
 
@@ -48,20 +45,12 @@ ext {
     log4jVersion = '2.12.1'
 }
 
-liveReload {
-    // Set docRoot as the base directory for
-    // the livereload server to watch for changes.
-    // We choose the output directory of the
-    // processResources task, because it will contain
-    // the changed files if we run our application
-    // with Gradle's continuous support ($ gradle -t run).
-    // In another terminal we need to start this
-    // task ($ gradle liveReload).
-    docRoot "build/libs"
-}
-
 task submitJob(type: Exec) {
   commandLine "./submit-job.sh"
+}
+
+task startJob(type: Exec) {
+  commandLine "./start-job.sh"
 }
 
 task createTopics(type: Exec) {
@@ -98,8 +87,8 @@ configurations {
     flinkShadowJar.exclude group: 'com.google.code.findbugs', module: 'jsr305'
     flinkShadowJar.exclude group: 'org.slf4j'
     flinkShadowJar.exclude group: 'org.apache.logging.log4j'
-}
 
+}
 
 // For details see https://github.com/radarsh/gradle-test-logger-plugin
 testlogger {
