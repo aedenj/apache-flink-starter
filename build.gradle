@@ -27,6 +27,9 @@ plugins {
 
     // http://xvik.github.io/gradle-quality-plugin/4.3.0/getting-started/
     id 'ru.vyarus.quality' version '4.3.0' // no config out of the box
+
+    // https://manuals.jrebel.com/jrebel/standalone/gradle.html
+    id "org.zeroturnaround.gradle.jrebel" version "1.1.10"
 }
 
 
@@ -63,7 +66,8 @@ tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
 
-applicationDefaultJvmArgs = ["-Dlog4j.configurationFile=log4j2.properties"]
+//applicationDefaultJvmArgs = ["-Dlog4j.configurationFile=log4j2.properties"]
+applicationDefaultJvmArgs = ["-Dlog4j.configurationFile=log4j2.properties","-agentpath:./libjrebel64.dylib" ]
 
 wrapper {
     gradleVersion = '6.5.1'
