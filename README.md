@@ -24,7 +24,7 @@ git clone git@github.com:aedenj/apache-flink-starter.git ~/projects/apache-flink
 cd ~/projects/apache-flink-starter;./gradlew build;docker-compose up
 ```
 
-Now you have a multi-node Kafka cluster and Flink job cluster.
+Now you have a multi-node Kafka cluster and Flink job cluster. See the [Kafka cluster repo](https://github.com/aedenj/kafka-cluster-starter) for its operating details.
 
 ## Running Your App
 
