@@ -13,83 +13,8 @@ state.savepoints.dir: file:///tmp/flink-savepoints-directory
 heartbeat.interval: 1000
 heartbeat.timeout: 5000
 
-jobmanager.rpc.address: jobmanager
 parallelism.default: 2
 
-
-jobmanager.rpc.address: jobmanager
-parallelism.default: 2
-
-
-jobmanager.rpc.address: jobmanager
-parallelism.default: 2
-
-
-jobmanager.rpc.address: jobmanager
-parallelism.default: 2
-
-
-jobmanager.rpc.address: jobmanager
-parallelism.default: 2
-
-
-jobmanager.rpc.address: jobmanager
-parallelism.default: 2
-
-
-jobmanager.rpc.address: jobmanager
-parallelism.default: 2
-
-
-jobmanager.rpc.address: jobmanager
-parallelism.default: 2
-
-
-jobmanager.rpc.address: jobmanager
-parallelism.default: 2
-
-
-jobmanager.rpc.address: jobmanager
-parallelism.default: 2
-
-
-jobmanager.rpc.address: jobmanager
-parallelism.default: 2
-
-
-jobmanager.rpc.address: jobmanager
-parallelism.default: 2
-
-
-jobmanager.rpc.address: jobmanager
-parallelism.default: 2
-
-
-jobmanager.rpc.address: jobmanager
-parallelism.default: 2
-
-
-jobmanager.rpc.address: jobmanager
-parallelism.default: 2
-
-
-jobmanager.rpc.address: jobmanager
-parallelism.default: 2
-
-
-jobmanager.rpc.address: jobmanager
-parallelism.default: 2
-
-
-jobmanager.rpc.address: jobmanager
-parallelism.default: 2
-
-
-jobmanager.rpc.address: jobmanager
-parallelism.default: 2
-
-
-jobmanager.rpc.address: jobmanager
 parallelism.default: 2
 
 
