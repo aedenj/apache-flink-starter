@@ -15,36 +15,27 @@ services:
       - 9003:9003
     depends_on:
       - elasticsearch
-    #volumes:
-      #- ./grafana/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
+    volumes:
+      - ./grafana/provisioning/:/etc/grafana/provisioning/
     networks:
       - flink-net
 
 
-  #logstash:
-    #build:
-      #context: logstash/
-      #args:
-        #ELK_VERSION: $ELK_VERSION
-    #volumes:
-      #- type: bind
-        #source: ./logstash/config/logstash.yml
-        #target: /usr/share/logstash/config/logstash.yml
-        #read_only: true
-      #- type: bind
-        #source: ./logstash/pipeline
-        #target: /usr/share/logstash/pipeline
-        #read_only: true
-    #ports:
-      #- "5000:5000/tcp"
-      #- "5000:5000/udp"
-      #- "9600:9600"
-    #environment:
-      #LS_JAVA_OPTS: "-Xmx256m -Xms256m"
-    #networks:
-      #- flink-net
-    #depends_on:
-      #- elasticsearch
+  logstash:
+    image: logstash:7.9.2
+    volumes:
+      - "./logstash/logstash.conf:/config-dir/logstash.conf"
+    restart: always
+    command: logstash -f /config-dir/logstash.conf
+    ports:
+      - "9600:9600"
+      - "7777:7777"
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+    networks:
+      - flink-net
+    depends_on:
+      - elasticsearch
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch-oss:7.0.1
@@ -58,6 +49,8 @@ services:
       - http.cors.allow-credentials=true
       - bootstrap.memory_lock=true
       - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
+    volumes:
+      - "./esdata:/usr/share/elasticsearch/data"
     ports:
       - '9200:9200'
       - '9300:9300'

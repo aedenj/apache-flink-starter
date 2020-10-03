@@ -57,7 +57,7 @@ After starting the job with one of the methods above, let's observe it reading a
 1. Start the job using one of the methods above.
 1. In a new terminal window start a Kafka producer by running,
 ```
-kafkad kafka-console-producer.sh --broker-list broker-1:19092 --topic source --property "parse.key=true" --property "key.separator=:
+kafkad kafka-console-producer.sh --broker-list broker-1:19092 --topic source --property "parse.key=true" --property "key.separator=:"
 ```
 1. Enter the message `1:Captain Marvel`
 1. Navigate to the [Kafka Topics UI](http://localhost:9002/#/) and inspect both the `source` and `destination` topics.

@@ -40,6 +40,7 @@ public final class StreamingJob {
             properties
         );
 
+
         msgs.addSink(enriched).name("Destination Topics");
         env.execute("Kafka Experiment");
     }
