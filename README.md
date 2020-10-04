@@ -52,7 +52,7 @@ After starting the job with one of the methods above, let's observe it reading a
 
 1. Start the job using one of the methods above.
 1. In a new terminal start a Kafka producer by running `./scripts/start-kafka-producer.sh`
-1. Enter the message `1:{ message: "Hello World!" }`
+1. You'll see the prompt `>`. Enter the message `1:{ message: "Hello World!" }`
 1. Navigate to the [Kafka Topics UI](http://localhost:9002/#/) and inspect both the `source` and `destination` topics.
 
 You should see the message `1:{ message: "Hello World!" }` in both topics.
