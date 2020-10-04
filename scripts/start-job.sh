@@ -1,4 +1,4 @@
 #!/bin/bash
 
-docker-compose -f flink-job-cluster.yml down;
-docker-compose -f flink-job-cluster.yml up -d;
+docker-compose -f docker/flink-job-cluster.yml down;
+docker-compose -f docker/flink-job-cluster.yml up -d;

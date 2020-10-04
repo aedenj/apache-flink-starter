@@ -15,8 +15,8 @@ services:
       - "8081:8081"
     command: "standalone-job"
     volumes:
-      - ./build/libs:/opt/flink/usrlib
-      - ./conf:/opt/flink/conf
+      - ../build/libs:/opt/flink/usrlib
+      - ../conf/flink:/opt/flink/conf
       - flink-checkpoints-directory:/tmp/flink-checkpoints-directory
       - /tmp/flink-savepoints-directory:/tmp/flink-savepoints-directory
     networks:
@@ -28,8 +28,8 @@ services:
       - jobmanager
     command: "taskmanager.sh start-foreground"
     volumes:
-      - ./build/libs:/opt/flink/usrlib
-      - ./conf:/opt/flink/conf
+      - ../build/libs:/opt/flink/usrlib
+      - ../conf/flink:/opt/flink/conf
       - flink-checkpoints-directory:/tmp/flink-checkpoints-directory
       - /tmp/flink-savepoints-directory:/tmp/flink-savepoints-directory
     networks:

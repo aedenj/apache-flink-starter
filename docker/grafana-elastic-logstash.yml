@@ -16,7 +16,7 @@ services:
     depends_on:
       - elasticsearch
     volumes:
-      - ./grafana/provisioning/:/etc/grafana/provisioning/
+      - ../conf/grafana/provisioning/:/etc/grafana/provisioning/
     networks:
       - flink-net
 
@@ -24,7 +24,7 @@ services:
   logstash:
     image: logstash:7.9.2
     volumes:
-      - "./logstash/logstash.conf:/config-dir/logstash.conf"
+      - ../conf/logstash/logstash.conf:/config-dir/logstash.conf
     restart: always
     command: logstash -f /config-dir/logstash.conf
     ports:
@@ -50,7 +50,7 @@ services:
       - bootstrap.memory_lock=true
       - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
     volumes:
-      - "./esdata:/usr/share/elasticsearch/data"
+      - ../data/elasticsearch:/usr/share/elasticsearch/data
     ports:
       - '9200:9200'
       - '9300:9300'

@@ -43,7 +43,5 @@ out/
 # Ignore Gradle build output directory
 build
 
-# ser
-kafka/
-zookeeper/
-esdata/
+# temp container related data
+data/
