@@ -32,12 +32,7 @@ Now you have a single node Kafka cluster with various admin tools to make life a
 The sample job in this repo reads from a topic named `source` and writes to a topic named `destination`.
 There are a couple of ways of running this job depending on what you're trying to accomplish.
 
-First, let's setup the kafka topics needed by the Flink job. Assumming you setup the [aliases here](https://github.com/aedenj/kafka-cluster-starter#common-tasks) run,
-
-```
-kafkacreatetopic broker-1:19092 1 1 source;
-kafkacreatetopic broker-1:19092 1 1 destination;
-```
+First, let's setup the kafka topics. Run `./gradlew createTopics`.
 
 ### Locally
 
@@ -56,10 +51,7 @@ Run `./gradlew shadowJar startJob`. This will run the job within a job cluster t
 After starting the job with one of the methods above, let's observe it reading an writing a message from one Kafak topic to another.
 
 1. Start the job using one of the methods above.
-1. In a new terminal start a Kafka producer by running,
-```
-kafkad kafka-console-producer.sh --broker-list broker-1:19092 --topic source --property "parse.key=true" --property "key.separator=:"
-```
+1. In a new terminal start a Kafka producer by running `./scripts/start-kafka-producer.sh`
 1. Enter the message `1:{ message: "Hello World!" }`
 1. Navigate to the [Kafka Topics UI](http://localhost:9002/#/) and inspect both the `source` and `destination` topics.
 

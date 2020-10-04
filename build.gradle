@@ -56,8 +56,9 @@ task stopJob(type: Exec) {
 
 
 task createTopics(type: Exec) {
-  commandLine "./create-topics.sh"
+  commandLine "./scripts/create-topics.sh"
 }
+
 
 sourceCompatibility = javaVersion
 targetCompatibility = javaVersion
