@@ -46,3 +46,4 @@ build
 # ser
 kafka/
 zookeeper/
+esdata/

@@ -1,12 +1,10 @@
 version: '3.8'
 
 networks:
+  flink-net:
+    external: true
   kafka-net:
-    name: kafka-net
-    driver: bridge
-
-volumes:
-  flink-checkpoints-directory:
+    external: true
 
 services:
   zk1:
@@ -17,45 +15,13 @@ services:
     environment:
       ZOOKEEPER_SERVER_ID: 1
       ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_SERVERS: server.1=zk1:2888:3888;server.2=zk2:2888:3888;server.3=zk3:2888:3888
+      ZOOKEEPER_SERVERS: server.1=zk1:2888:3888
     volumes:
       - ./zookeeper/zk1/data:/data
       - ./zookeeper/zk1/datalog:/datalog
     networks:
+      - flink-net
       - kafka-net
-
-
-  zk2:
-    image: zookeeper
-    hostname: zk2
-    ports:
-      - "2182:2182"
-    environment:
-      ZOOKEEPER_SERVER_ID: 2
-      ZOOKEEPER_CLIENT_PORT: 2182
-      ZOOKEEPER_SERVERS: server.1=zk1:2888:3888;server.2=zk2:2888:3888;server.3=zk3:2888:3888
-    volumes:
-      - ./zookeeper/zk2/data:/data
-      - ./zookeeper/zk2/datalog:/datalog
-    networks:
-      - kafka-net
-
-
-  zk3:
-    image: zookeeper
-    hostname: zk3
-    ports:
-      - "2183:2183"
-    environment:
-      ZOOKEEPER_SERVER_ID: 3
-      ZOOKEEPER_CLIENT_PORT: 2183
-      ZOOKEEPER_SERVERS: server.1=zk1:2888:3888;server.2=zk2:2888:3888;server.3=zk3:2888:3888
-    volumes:
-      - ./zookeeper/zk3/data:/data
-      - ./zookeeper/zk3/datalog:/datalog
-    networks:
-      - kafka-net
-
 
   broker-1:
     image: wurstmeister/kafka:latest
@@ -64,68 +30,19 @@ services:
       - "9092:9092"
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zk1:2181,zk2:2182,zk3:2183
+      KAFKA_ZOOKEEPER_CONNECT: zk1:2181
       KAFKA_LISTENERS: LISTENER_DOCKER_INTERNAL://:19092,LISTENER_DOCKER_EXTERNAL://:9092
       KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER_INTERNAL://broker-1:19092,LISTENER_DOCKER_EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_DOCKER_INTERNAL:PLAINTEXT,LISTENER_DOCKER_EXTERNAL:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER_INTERNAL
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
     volumes:
       - ./kafka/broker-1/data:/var/lib/kafka/data
     depends_on:
       - zk1
-      - zk2
-      - zk3
     networks:
-      - kafka-net
-
-
-  broker-2:
-    image: wurstmeister/kafka:latest
-    hostname: "broker-2"
-    ports:
-      - "9093:9093"
-    environment:
-      KAFKA_BROKER_ID: 2
-      KAFKA_ZOOKEEPER_CONNECT: zk1:2181,zk2:2182,zk3:2183
-      KAFKA_LISTENERS: LISTENER_DOCKER_INTERNAL://:19093,LISTENER_DOCKER_EXTERNAL://:9093
-      KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER_INTERNAL://broker-2:19093,LISTENER_DOCKER_EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9093
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_DOCKER_INTERNAL:PLAINTEXT,LISTENER_DOCKER_EXTERNAL:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER_INTERNAL
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
-      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
-    volumes:
-      - ./kafka/broker-2/data:/var/lib/kafka/data
-    depends_on:
-      - zk1
-      - zk2
-      - zk3
-    networks:
-      - kafka-net
-
-
-  broker-3:
-    image: wurstmeister/kafka:latest
-    hostname: "broker-3"
-    ports:
-      - "9094:9094"
-    environment:
-      KAFKA_BROKER_ID: 3
-      KAFKA_ZOOKEEPER_CONNECT: zk1:2181,zk2:2182,zk3:2183
-      KAFKA_LISTENERS: LISTENER_DOCKER_INTERNAL://:19094,LISTENER_DOCKER_EXTERNAL://:9094
-      KAFKA_ADVERTISED_LISTENERS: LISTENER_DOCKER_INTERNAL://broker-3:19094,LISTENER_DOCKER_EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9094
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_DOCKER_INTERNAL:PLAINTEXT,LISTENER_DOCKER_EXTERNAL:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER_INTERNAL
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
-      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
-    volumes:
-      - ./kafka/broker-3/data:/var/lib/kafka/data
-    depends_on:
-      - zk1
-      - zk2
-      - zk3
-    networks:
+      - flink-net
       - kafka-net
 
 
@@ -136,10 +53,8 @@ services:
     command: ["tail", "-f", "/dev/null"]
     depends_on:
       - broker-1
-      - broker-2
-      - broker-3
     networks:
-      - kafka-net
+      - flink-net
 
 
   zoonavigator:
@@ -148,14 +63,12 @@ services:
       - "9001:8000"
     environment:
       HTTP_PORT: 8000
-      AUTO_CONNECT_CONNECTION_STRING: "zk1:2181,zk2:2182,zk3:2183"
+      AUTO_CONNECT_CONNECTION_STRING: "zk1:2181"
     depends_on:
       - zk1
-      - zk2
-      - zk3
     restart: always
     networks:
-      - kafka-net
+      - flink-net
 
 
   kafka-manager:
@@ -163,15 +76,13 @@ services:
     ports:
       - "9000:9000"
     environment:
-      ZK_HOSTS: "zk1:2181,zk2:2182,zk3:2183"
+      ZK_HOSTS: "zk1:2181"
       APPLICATION_SECRET: "random-secret"
     command: -Dpidfile.path=/dev/null
     depends_on:
       - broker-1
-      - broker-2
-      - broker-3
     networks:
-      - kafka-net
+      - flink-net
 
 
   kafka-rest-proxy:
@@ -182,13 +93,11 @@ services:
     environment:
       KAFKA_REST_LISTENERS: http://0.0.0.0:8082/
       KAFKA_REST_HOST_NAME: kafka-rest-proxy
-      KAFKA_REST_BOOTSTRAP_SERVERS: PLAINTEXT://broker-1:19092,PLAINTEXT://broker-2:19093,PLAINTEXT://broker-3:19094
+      KAFKA_REST_BOOTSTRAP_SERVERS: PLAINTEXT://broker-1:19092
     depends_on:
       - broker-1
-      - broker-2
-      - broker-3
     networks:
-      - kafka-net
+      - flink-net
 
 
   kafka-topics-ui:
@@ -203,43 +112,4 @@ services:
     depends_on:
       - kafka-rest-proxy
     networks:
-      - kafka-net
-
-
-  jobmanager:
-    image: flink:1.11.0-scala_2.11
-    hostname: jobmanager
-    ports:
-      - "8081:8081"
-    command: "standalone-job"
-    environment:
-      - |
-        FLINK_PROPERTIES=
-        jobmanager.rpc.address: jobmanager
-        parallelism.default: 2
-    volumes:
-      - ./build/libs:/opt/flink/usrlib
-      - ./conf:/opt/flink/conf
-      - flink-checkpoints-directory:/tmp/flink-checkpoints-directory
-      - /tmp/flink-savepoints-directory:/tmp/flink-savepoints-directory
-    networks:
-      - kafka-net
-
-  taskmanager:
-    image: flink:1.11.0-scala_2.11
-    depends_on:
-      - jobmanager
-    command: "taskmanager.sh start-foreground"
-    environment:
-      - |
-        FLINK_PROPERTIES=
-        jobmanager.rpc.address: jobmanager
-        taskmanager.numberOfTaskSlots: 2
-        parallelism.default: 2
-    volumes:
-      - ./build/libs:/opt/flink/usrlib
-      - ./conf:/opt/flink/conf
-      - flink-checkpoints-directory:/tmp/flink-checkpoints-directory
-      - /tmp/flink-savepoints-directory:/tmp/flink-savepoints-directory
-    networks:
-      - kafka-net
+      - flink-net

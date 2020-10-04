@@ -15,9 +15,3 @@ heartbeat.timeout: 5000
 
 parallelism.default: 2
 
-parallelism.default: 2
-
-
-jobmanager.rpc.address: jobmanager
-parallelism.default: 2
-

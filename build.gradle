@@ -45,13 +45,15 @@ ext {
     log4jVersion = '2.12.1'
 }
 
-task submitJob(type: Exec) {
-  commandLine "./submit-job.sh"
-}
 
 task startJob(type: Exec) {
-  commandLine "./start-job.sh"
+  commandLine "./scripts/start-job.sh"
 }
+
+task stopJob(type: Exec) {
+  commandLine "./scripts/stop-job.sh"
+}
+
 
 task createTopics(type: Exec) {
   commandLine "./create-topics.sh"
