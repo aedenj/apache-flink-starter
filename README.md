@@ -51,7 +51,7 @@ For quick feedback it's easiest to run the job locally,
 Run `./gradlew shadowJar startJob`. This will run the job within a job cluster that is setup in `flink-job-cluster.yml`. That cluster will run against the Kafka cluster started earlier.
 
 
-## Observing the Job in Action
+### Observing the Job in Action
 
 After starting the job with one of the methods above, let's observe it reading an writing a message from one Kafak topic to another.
 
@@ -66,7 +66,7 @@ kafkad kafka-console-producer.sh --broker-list broker-1:19092 --topic source --p
 You should see the message `1:{ message: "Hello World!" }` in both topics.
 
 
-## Live Reload
+### Live Reload
 
 Live reload is a great feature to have in your development loop as it can save you time. The closest I've come to on this is the command `./gradlew -t shadowJar startJob`. This approach attempts to simulate live reload using Gradle's `-t` flag by restarting the containers of the Flink job cluster in `flink-job-cluster.yml`.
 
@@ -84,7 +84,8 @@ This repo also comes with the ability to spin up Grafana, Elastic Search and Log
 Some things to note about the setup,
 
 1. Elasticsearch as already been setup as a [datasource](https://github.com/aedenj/apache-flink-starter/tree/master/conf/grafana/provisioning/datasources) for Grafana. Tha
-1. Logstash has a basic configuration to read from the Kafka cluster and write to Elasticsearch
+1. Logstash has a [basic configuration](https://github.com/aedenj/apache-flink-starter/tree/master/conf/logstash) to read from the Kafka cluster and write to Elasticsearch
+1. There is no default dashboard in Grafana.
 
 ### Viewing Data with Dejavu
 
