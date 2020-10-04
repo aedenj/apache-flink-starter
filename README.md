@@ -68,3 +68,21 @@ You should see the message `1:Captain Marvel` in both topics.
 ## Live Reload
 
 Live reload is a great feature to have in your development loop because it can save you time. The closest I've come to on this is the command `./gradlew -t shadowJar startJob`. This approach attempts to simulate live reload using Gradle's `-t` flag by restarting the containers of the Flink job cluster in `flink-job-cluster.yml`. If you have found a better way, please drop me an email.
+
+## Grafana, Elastic Search and Logstash
+
+This repo also comes with the ability to spin up Grafana, Elastic Search and Logstash that let's you try out the common use case of using Grafana as a visual tool for querying data from Elastic Search. Simply run `docker-compose -f grafana-elastic-logstash.yml up`. The additional containers are also present to support administractive tasks,
+
+1. [Dejavu](https://github.com/appbaseio/dejavu) - Dejavu is a UI for browsing data in Elasticsearch..
+1. [Cerebro](https://github.com/lmenezes/cerebro) - Is a cluster management UI for Elastic Search
+
+### Viewing Data with Dejavu
+
+1. Run `docker-compose -f grafana-elastic-logstash.yml up` if you haven't already.
+1. [Open Dejavu](http://localhost:1358/?appname=&url=&mode=edit)
+1. Enter `http://elasticsearch:9200` into the input box with hint text of `URL for Cluster`.
+1. Enter `*` in the input box with the hint text of `Appname`
+
+### Managing Elastic Search with Cerebro
+
+1. [Open Cerebro](http://localhost:9004/#/overview?host=http:%2F%2Felasticsearch:9200) and give it a spin. It's feature rich.

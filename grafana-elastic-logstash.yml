@@ -73,7 +73,7 @@ services:
 
 
   dejavu:
-    image: appbaseio/dejavu:3.2.3
+    image: appbaseio/dejavu:3.4.7
     hostname: dejavu
     ports:
       - '1358:1358'
