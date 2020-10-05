@@ -75,9 +75,9 @@ This repo also comes with the ability to spin up Grafana, Elastic Search and Log
 
 Some things to note about the setup,
 
-1. Elasticsearch as already been setup as a [datasource](https://github.com/aedenj/apache-flink-starter/tree/master/conf/grafana/provisioning/datasources) for Grafana. Tha
-1. Logstash has a [basic configuration](https://github.com/aedenj/apache-flink-starter/tree/master/conf/logstash) to read from the Kafka cluster and write to Elasticsearch
-1. There is no default dashboard in Grafana.
+1. Elasticsearch as already been setup as a [datasource](https://github.com/aedenj/apache-flink-starter/tree/master/conf/grafana/provisioning/datasources) for Grafana.
+1. Logstash has a [basic configuration](https://github.com/aedenj/apache-flink-starter/tree/master/conf/logstash) to read from the Kafka cluster and write to Elasticsearch.
+1. No dashboard has been setup in Grafana.
 
 ### Viewing Data with Dejavu
 
