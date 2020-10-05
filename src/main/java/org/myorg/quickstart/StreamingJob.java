@@ -33,7 +33,7 @@ public final class StreamingJob {
         final FlinkKafkaProducer<String> enriched = new FlinkKafkaProducer<>(
             "destination",
             new SimpleStringSchema(),
-           config.kafka()
+            config.kafka()
         );
 
         msgs.addSink(enriched).name("Destination Topic");

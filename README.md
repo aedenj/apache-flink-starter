@@ -22,7 +22,7 @@ Now let's clone the repo and fire up our system,
 
 ```
 git clone git@github.com:aedenj/apache-flink-starter.git ~/projects/apache-flink-starter
-cd ~/projects/apache-flink-starter;./gradlew build; docker-compose -f docker/kafka-cluster.yml up
+cd ~/projects/apache-flink-starter;docker-compose -f docker/kafka-cluster.yml up
 ```
 
 Now you have a single node Kafka cluster with various admin tools to make life a little easier. See the [Kafka cluster repo](https://github.com/aedenj/kafka-cluster-starter) for its operating details.
