@@ -16,13 +16,13 @@ buildscript {
 }
 
 plugins {
-    id 'java'
+    // https://docs.gradle.org/current/userguide/application_plugin.html
     id 'application'
 
     // provide pretty output to the console for tests
     id 'com.adarshr.test-logger' version '2.1.0'
 
-    // shadow plugin to produce fat JARs
+    // plugin to produce an uber jar https://imperceptiblethoughts.com/shadow/introduction/
     id 'com.github.johnrengelman.shadow' version '5.2.0'
 
     // http://xvik.github.io/gradle-quality-plugin/4.3.0/getting-started/
@@ -36,6 +36,10 @@ version = '1.0'
 mainClassName = 'org.myorg.quickstart.StreamingJob'
 description = """Flink Quickstart Job"""
 
+application {
+  applicationDefaultJvmArgs = ["-Dconfig.resource=local.config.json","-Dlog4j.configurationFile=log4j2.properties"]
+}
+
 ext {
     javaVersion = '1.8'
     junitVersion = '5.6.2'
@@ -45,7 +49,6 @@ ext {
     log4jVersion = '2.12.1'
 }
 
-
 task startJob(type: Exec) {
   commandLine "./scripts/start-job.sh"
 }
@@ -53,7 +56,6 @@ task startJob(type: Exec) {
 task stopJob(type: Exec) {
   commandLine "./scripts/stop-job.sh"
 }
-
 
 task createTopics(type: Exec) {
   commandLine "./create-topics.sh"
@@ -65,7 +67,6 @@ tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
 
-applicationDefaultJvmArgs = ["-Dlog4j.configurationFile=log4j2.properties"]
 
 wrapper {
     gradleVersion = '6.5.1'
@@ -121,11 +122,14 @@ dependencies {
     // connectors. These must be in the flinkShadowJar configuration!
     // --------------------------------------------------------------
     flinkShadowJar "org.apache.flink:flink-connector-kafka_2.11:${flinkVersion}"
+    flinkShadowJar group: 'com.typesafe', name: 'config', version: '1.4.0'
 
     compile "org.apache.logging.log4j:log4j-api:${log4jVersion}"
     compile "org.apache.logging.log4j:log4j-core:${log4jVersion}"
     compile "org.apache.logging.log4j:log4j-slf4j-impl:${log4jVersion}"
     compile "org.slf4j:slf4j-log4j12:${slf4jVersion}"
+
+    compile group: 'com.typesafe', name: 'config', version: '1.4.0'
     compile group: 'org.apache.flink', name: 'flink-connector-kafka_2.11', version: '1.11.0'
 
     // Add test dependencies here.
@@ -145,6 +149,8 @@ dependencies {
 sourceSets {
     main.compileClasspath += configurations.flinkShadowJar
     main.runtimeClasspath += configurations.flinkShadowJar
+    main.resources.includes += ["local.config.json"]
+    main.resources.srcDirs += ["conf/flink"]
 
     test.compileClasspath += configurations.flinkShadowJar
     test.runtimeClasspath += configurations.flinkShadowJar
@@ -164,5 +170,6 @@ jar {
 shadowJar {
     baseName 'flink-stream-job'
     zip64 true
+    //append "conf/flink/local.config.json"
     configurations = [project.configurations.flinkShadowJar]
 }
