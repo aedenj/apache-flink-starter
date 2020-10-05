@@ -27,7 +27,7 @@ cd ~/projects/apache-flink-starter;docker-compose -f docker/kafka-cluster.yml up
 
 Now you have a single node Kafka cluster with various admin tools to make life a little easier. See the [Kafka cluster repo](https://github.com/aedenj/kafka-cluster-starter) for its operating details.
 
-## Running Your App
+## Running the App
 
 The sample job in this repo reads from a topic named `source` and writes to a topic named `destination`.
 There are a couple of ways of running this job depending on what you're trying to accomplish.
