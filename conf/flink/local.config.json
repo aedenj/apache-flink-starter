@@ -1,6 +1,0 @@
-{
-  "kafka": {
-    "endpoints": "localhost:9092,broker-1:19092",
-    "groupId": "local-flink-streaming-job"
-  }
-}

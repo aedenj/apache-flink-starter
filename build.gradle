@@ -37,7 +37,7 @@ mainClassName = 'org.myorg.quickstart.StreamingJob'
 description = """Flink Quickstart Job"""
 
 application {
-  applicationDefaultJvmArgs = ["-Dconfig.resource=local.config.json","-Dlog4j.configurationFile=log4j2.properties"]
+  applicationDefaultJvmArgs = ["-Dlog4j.configurationFile=log4j2.properties"]
 }
 
 ext {
@@ -58,7 +58,7 @@ task stopJob(type: Exec) {
 }
 
 task createTopics(type: Exec) {
-  commandLine "./create-topics.sh"
+  commandLine "./scripts/create-topics.sh"
 }
 
 sourceCompatibility = javaVersion
@@ -133,7 +133,6 @@ dependencies {
     compile group: 'org.apache.flink', name: 'flink-connector-kafka_2.11', version: '1.11.0'
 
     // Add test dependencies here.
-    //testCompile "junit:junit:$junitVersion"
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
     testCompile group: 'org.mockito', name: 'mockito-core', version: '3.4.6'
@@ -149,8 +148,6 @@ dependencies {
 sourceSets {
     main.compileClasspath += configurations.flinkShadowJar
     main.runtimeClasspath += configurations.flinkShadowJar
-    main.resources.includes += ["local.config.json"]
-    main.resources.srcDirs += ["conf/flink"]
 
     test.compileClasspath += configurations.flinkShadowJar
     test.runtimeClasspath += configurations.flinkShadowJar
@@ -170,6 +167,5 @@ jar {
 shadowJar {
     baseName 'flink-stream-job'
     zip64 true
-    //append "conf/flink/local.config.json"
     configurations = [project.configurations.flinkShadowJar]
 }
