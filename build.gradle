@@ -57,10 +57,25 @@ task stopJob(type: Exec) {
   commandLine "./scripts/stop-job.sh"
 }
 
-task createTopics(type: Exec) {
-  commandLine "./scripts/create-topics.sh"
+task kafkaUp(type: Exec) {
+  commandLine "docker-compose", "-f", "docker/kafka-cluster.yml", "up"
 }
 
+task kafkaDown(type: Exec) {
+  commandLine "docker-compose", "-f", "docker/kafka-cluster.yml", "down"
+}
+
+task createTopics(type: Exec) {
+  commandLine "./scripts/create-topics.sh", "source", "destination"
+}
+
+task grafanaUp(type: Exec) {
+  commandLine "docker-compose", "-f", "docker/grafana-elastic-logstash.yml", "up"
+}
+
+task grafanaUp(type: Exec) {
+  commandLine "docker-compose", "-f", "docker/grafana-elastic-logstash.yml", "down"
+}
 
 sourceCompatibility = javaVersion
 targetCompatibility = javaVersion

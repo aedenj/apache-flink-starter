@@ -22,7 +22,7 @@ Now let's clone the repo and fire up our system,
 
 ```
 git clone git@github.com:aedenj/apache-flink-starter.git ~/projects/apache-flink-starter
-cd ~/projects/apache-flink-starter;docker-compose -f docker/kafka-cluster.yml up
+cd ~/projects/apache-flink-starter;./gradlew kafkaUp
 ```
 
 Now you have a single node Kafka cluster with various admin tools to make life a little easier. See the [Kafka cluster repo](https://github.com/aedenj/kafka-cluster-starter) for its operating details.
@@ -68,7 +68,7 @@ If you've found a better way, please drop me an email.
 
 ## Grafana, Elastic Search and Logstash
 
-This repo also comes with the ability to spin up Grafana, Elastic Search and Logstash that let's you try out the common use case of using Grafana as a visual tool for querying data from Elastic Search. Simply run `docker-compose -f docker/grafana-elastic-logstash.yml up`. There are additional containers present to support administractive tasks,
+This repo also comes with the ability to spin up Grafana, Elastic Search and Logstash that let's you try out the common use case of using Grafana as a visual tool for querying data from Elastic Search. Simply run `./gradlew grafanaUp`. There are additional containers present to support administractive tasks,
 
 1. [Dejavu](https://github.com/appbaseio/dejavu) - Dejavu is a UI for browsing data in Elasticsearch..
 1. [Cerebro](https://github.com/lmenezes/cerebro) - Is a cluster management UI for Elastic Search
@@ -81,7 +81,7 @@ Some things to note about the setup,
 
 ### Viewing Data with Dejavu
 
-1. Run `docker-compose -f docker/grafana-elastic-logstash.yml up` if you haven't already.
+1. Run `./gradlew grafanaUp` if you haven't already.
 1. [Open Dejavu](http://localhost:1358/?appname=&url=&mode=edit)
 1. Enter `http://elasticsearch:9200` into the input box with hint text of `URL for Cluster`.
 1. Enter `*` in the input box with the hint text of `Appname`
