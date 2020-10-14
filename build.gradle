@@ -73,7 +73,7 @@ task grafanaUp(type: Exec) {
   commandLine "docker-compose", "-f", "docker/grafana-elastic-logstash.yml", "up"
 }
 
-task grafanaUp(type: Exec) {
+task grafanaDown(type: Exec) {
   commandLine "docker-compose", "-f", "docker/grafana-elastic-logstash.yml", "down"
 }
 
