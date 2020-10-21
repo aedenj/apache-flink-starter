@@ -47,7 +47,7 @@ services:
 
 
   kafka-tools:
-    image: wurstmeister/kafka:latest
+    image: confluentinc/cp-kafka:latest
     hostname: "kafka-tools"
     container_name: "kafka-tools"
     command: ["tail", "-f", "/dev/null"]
