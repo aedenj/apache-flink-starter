@@ -49,33 +49,34 @@ ext {
     log4jVersion = '2.12.1'
 }
 
-task startJob(type: Exec) {
-  commandLine "./scripts/start-job.sh"
+task stopJob(type: Exec) {
+  commandLine "docker-compose", "-p", "flink", "-f", "docker/flink-job-cluster.yml", "down"
 }
 
-task stopJob(type: Exec) {
-  commandLine "./scripts/stop-job.sh"
+task startJob(type: Exec, dependsOn: 'stopJob') {
+  commandLine "docker-compose", "-p", "flink", "-f", "docker/flink-job-cluster.yml", "up", "-d"
 }
 
 task kafkaUp(type: Exec) {
-  commandLine "docker-compose", "-f", "docker/kafka-cluster.yml", "up"
+  commandLine "docker-compose", "-p", "kafka", "-f", "docker/kafka-cluster.yml", "up"
 }
 
 task kafkaDown(type: Exec) {
-  commandLine "docker-compose", "-f", "docker/kafka-cluster.yml", "down"
+  commandLine "docker-compose", "-p", "kafka", "-f", "docker/kafka-cluster.yml", "down"
 }
 
 task createTopics(type: Exec) {
   commandLine "./scripts/create-topics.sh", "source", "destination"
 }
 
-task grafanaUp(type: Exec) {
-  commandLine "docker-compose", "-f", "docker/grafana-elastic-logstash.yml", "up"
+task grafanaDown(type: Exec) {
+  commandLine "docker-compose", "-p", "grafana", "-f", "docker/grafana-elastic-logstash.yml", "down"
 }
 
-task grafanaDown(type: Exec) {
-  commandLine "docker-compose", "-f", "docker/grafana-elastic-logstash.yml", "down"
+task grafanaUp(type: Exec) {
+  commandLine "docker-compose", "-p", "grafana", "-f", "docker/grafana-elastic-logstash.yml", "up"
 }
+
 
 sourceCompatibility = javaVersion
 targetCompatibility = javaVersion
