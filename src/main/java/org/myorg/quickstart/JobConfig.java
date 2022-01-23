@@ -7,7 +7,6 @@ import java.util.Properties;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
-import org.apache.flink.runtime.taskexecutor.JobTable;
 
 
 final class JobConfig {
