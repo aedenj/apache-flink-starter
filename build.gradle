@@ -1,13 +1,14 @@
 plugins {
-    id 'java'
+    // https://docs.gradle.org/current/userguide/idea_plugin.html
+    id 'idea'
 
     // https://docs.gradle.org/current/userguide/application_plugin.html
     id 'application'
 
-    // provide pretty output to the console for tests
+    // https://plugins.gradle.org/plugin/com.adarshr.test-logger
     id 'com.adarshr.test-logger' version '3.0.0'
 
-    // plugin to produce an uber jar https://imperceptiblethoughts.com/shadow/introduction/
+    // https://imperceptiblethoughts.com/shadow/introduction/
     id 'com.github.johnrengelman.shadow' version '7.1.2'
 
     // http://xvik.github.io/gradle-quality-plugin/4.3.0/getting-started/
@@ -22,16 +23,29 @@ mainClassName = 'org.myorg.quickstart.StreamingJob'
 description = """Flink Quickstart Job"""
 
 application {
-  applicationDefaultJvmArgs = ["-Dlog4j.configurationFile=log4j2.properties"]
+  applicationDefaultJvmArgs = ["-Dlog4j.configurationFile=conf/flink/log4j-local.properties"]
+}
+
+run {
+    environment "FLINK_ENV", "local"
 }
 
 ext {
     javaVersion = '1.11'
     junitVersion = '5.8.2'
+    assertjVersion = '3.20.2'
     flinkVersion = '1.14.2'
     scalaVersion = '2.11'
     slf4jVersion = '1.7.32'
     log4jVersion = '2.17.0'
+}
+
+task kafkaUp(type: Exec) {
+    commandLine "docker-compose", "-p", "kafka", "-f", "docker/kafka-cluster.yml", "up"
+}
+
+task kafkaDown(type: Exec) {
+    commandLine "docker-compose", "-p", "kafka", "-f", "docker/kafka-cluster.yml", "down"
 }
 
 task stopJob(type: Exec) {
@@ -40,14 +54,6 @@ task stopJob(type: Exec) {
 
 task startJob(type: Exec, dependsOn: 'stopJob') {
   commandLine "docker-compose", "-p", "flink", "-f", "docker/flink-job-cluster.yml", "up", "-d"
-}
-
-task kafkaUp(type: Exec) {
-  commandLine "docker-compose", "-p", "kafka", "-f", "docker/kafka-cluster.yml", "up"
-}
-
-task kafkaDown(type: Exec) {
-  commandLine "docker-compose", "-p", "kafka", "-f", "docker/kafka-cluster.yml", "down"
 }
 
 task createTopics(type: Exec) {
@@ -61,7 +67,6 @@ task grafanaDown(type: Exec) {
 task grafanaUp(type: Exec) {
   commandLine "docker-compose", "-p", "grafana", "-f", "docker/grafana-elastic-logstash.yml", "up"
 }
-
 
 sourceCompatibility = javaVersion
 targetCompatibility = javaVersion
@@ -93,22 +98,25 @@ configurations {
     flinkShadowJar.exclude group: 'org.slf4j'
     flinkShadowJar.exclude group: 'org.apache.logging.log4j'
 
+    // https://logging.apache.org/log4j/2.x/faq.html#exclusions
+    // Good Explanation: https://stackoverflow.com/questions/42348755/class-path-contains-multiple-slf4j-bindings-error
+    all*.exclude group: 'log4j', module: 'log4j'
+    all*.exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+}
+
+test {
+    useJUnitPlatform()
 }
 
 // For details see https://github.com/radarsh/gradle-test-logger-plugin
 testlogger {
     theme 'mocha'
     slowThreshold 5000
+    showStandardStreams true
+    showFullStackTraces false
     logLevel 'QUIET'
 }
 
-test {
-    useJUnitPlatform()
-
-    testLogging {
-      events "passed", "skipped", "failed"
-    }
-}
 
 // declare the dependencies for your production and test code
 dependencies {
@@ -116,25 +124,37 @@ dependencies {
     // Dependencies that should be part of the shadow jar, e.g.
     // connectors. These must be in the flinkShadowJar configuration!
     // --------------------------------------------------------------
-    flinkShadowJar "org.apache.flink:flink-connector-kafka_${scalaVersion}:${flinkVersion}"
-    flinkShadowJar group: 'com.typesafe', name: 'config', version: '1.4.0'
-
+    // Core
     implementation "org.apache.flink:flink-streaming-java_${scalaVersion}:${flinkVersion}"
     implementation "org.apache.flink:flink-runtime-web_${scalaVersion}:${flinkVersion}"
 
+    // Connectors & Formats
+    implementation group: 'org.apache.flink', name: "flink-connector-kafka_${scalaVersion}", version: "${flinkVersion}"
+
+    // Logging
     implementation "org.apache.logging.log4j:log4j-api:${log4jVersion}"
     implementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
     implementation "org.apache.logging.log4j:log4j-slf4j-impl:${log4jVersion}"
     implementation "org.slf4j:slf4j-log4j12:${slf4jVersion}"
 
+    // Supplementary Libraries
     implementation group: 'com.typesafe', name: 'config', version: '1.4.0'
-    implementation group: 'org.apache.flink', name: "flink-connector-kafka_${scalaVersion}", version: "${flinkVersion}"
 
+
+    // -----------------------------------------------------------------
+    // Dependencies that should be part of the shadow jar, e.g connectors.
+    // -----------------------------------------------------------------
+    flinkShadowJar "org.apache.flink:flink-connector-kafka_${scalaVersion}:${flinkVersion}"
+
+    // Supplementary Libraries
+    flinkShadowJar group: 'com.typesafe', name: 'config', version: '1.4.0'
+
+    // -----------------------------------------------------------------
     // Add test dependencies here.
-    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+    // -----------------------------------------------------------------
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
-    testImplementation group: 'org.assertj', name:'assertj-core', version: '3.16.1'
-
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+    testImplementation group: 'org.assertj', name:'assertj-core', version: "${assertjVersion}"
 
     testImplementation "org.apache.flink:flink-test-utils_${scalaVersion}:${flinkVersion}"
     testImplementation "org.apache.flink:flink-runtime:${flinkVersion}:tests"

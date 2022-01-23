@@ -7,12 +7,13 @@ import java.util.Properties;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
+import org.apache.flink.runtime.taskexecutor.JobTable;
 
 
 final class JobConfig {
     private Config config;
 
-    JobConfig(final Config config) {
+    private JobConfig(final Config config) {
         this.config = config;
         // This verifies that the Config is sane and has our
         // reference config. Importantly, we specify the "simple-lib"
@@ -22,15 +23,32 @@ final class JobConfig {
         config.checkValid(ConfigFactory.defaultReference());
     }
 
-    JobConfig() {
-        this(ConfigFactory.load());
+    static public JobConfig create() {
+        final Config appConfig = ConfigFactory.load();
+        System.out.println("HELP: " + "application." + System.getenv("FLINK_ENV") + ".conf");
+        final Config envConfig = ConfigFactory.load(
+                "application." + System.getenv("FLINK_ENV") + ".conf"
+        );
+
+        return new JobConfig(appConfig.withFallback(envConfig));
     }
 
-    public Properties kafka() {
+    public String brokers() {
+        return config.getString("kafka.endpoints");
+    }
+
+    public Properties consumer() {
         final Properties props = new Properties();
 
-        props.setProperty("bootstrap.servers", config.getString("kafka.endpoints"));
-        props.setProperty("group.id", config.getString("kafka.groupId"));
+        props.setProperty("group.id", config.getString("kafka.consumer.groupId"));
+
+        return props;
+    }
+
+    public Properties producer() {
+        final Properties props = new Properties();
+
+        props.setProperty("transaction.timeout.ms", config.getString("kafka.producer.transTimeout"));
 
         return props;
     }

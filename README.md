@@ -1,13 +1,10 @@
 Apache Flink Starter
 ===================
-A starting point for an [Apache Flink](https://ci.apache.org/projects/flink/flink-docs-master/) with a
-Kafka cluster and a Flink job cluster all under Docker .
+A starting point for an [Apache Flink](https://ci.apache.org/projects/flink/flink-docs-master/) project that powers a data pipeline involving Kafka and the ELK stack. There are also various administrative tools like Kafdrop. All these systems are able to run under docker.
 
 ## Pre-Requisites
 
-1. Docker
-
-    + [Mac](https://download.docker.com/mac/stable/Docker.dmg)
+1. Docker on [Mac](https://download.docker.com/mac/stable/Docker.dmg)
 
 1. [Gradle](https://gradle.org) - You have a few options here
     + If you're using Intellij, just make sure it's enabled.
@@ -15,16 +12,12 @@ Kafka cluster and a Flink job cluster all under Docker .
 
 ## Up & Running
 
-With Docker installed, we will need a few external docker networks to operate the various containers.
-Run `docker network create flink-net` and `docker network create kafka-net`. If you recieve an already exists message for either of these commands you're good to go.
-
-Now let's clone the repo and fire up our system,
+Let's first clone the repo and fire up our system,
 
 ```
 git clone git@github.com:aedenj/apache-flink-starter.git ~/projects/apache-flink-starter
 cd ~/projects/apache-flink-starter;./gradlew kafkaUp
 ```
-
 Now you have a single node Kafka cluster with various admin tools to make life a little easier. See the [Kafka cluster repo](https://github.com/aedenj/kafka-cluster-starter) for its operating details.
 
 ## Running the App
@@ -53,7 +46,7 @@ After starting the job with one of the methods above, let's observe it reading a
 1. Start the job using one of the methods above.
 1. In a new terminal start a Kafka producer by running `./scripts/start-kafka-producer.sh`
 1. You'll see the prompt `>`. Enter the message `1:{ message: "Hello World!" }`
-1. Navigate to the [Kafka Topics UI](http://localhost:9002/#/) and inspect both the `source` and `destination` topics.
+1. Navigate to the [Kafdrop](http://localhost:8001/#/) and view the messages both the `source` and `destination` topics. Be sure to change format to default or else you will not see any messages.
 
 You should see the message `1:{ message: "Hello World!" }` in both topics.
 

@@ -14,4 +14,3 @@ heartbeat.interval: 1000
 heartbeat.timeout: 5000
 
 parallelism.default: 2
-

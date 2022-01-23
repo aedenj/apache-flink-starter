@@ -1,7 +1,7 @@
 version: '3.8'
 
 networks:
-  flink-net:
+  kafka-net:
     external: true
 
 volumes:
@@ -9,29 +9,35 @@ volumes:
 
 services:
   jobmanager:
-    image: flink:1.11.0-scala_2.11
+    image: flink:1.14.3-scala_2.11-java11
     hostname: jobmanager
     ports:
       - "8081:8081"
     command: "standalone-job"
+    environment:
+      JOB_MANAGER_RPC_ADDRESS: jobmanager
+      FLINK_ENV: cluster
     volumes:
       - ../build/libs:/opt/flink/usrlib
       - ../conf/flink:/opt/flink/conf
-      - flink-checkpoints-directory:/tmp/flink-checkpoints-directory
-      - /tmp/flink-savepoints-directory:/tmp/flink-savepoints-directory
+      - ../data/flink/checkpoints:/tmp/flink-checkpoints-directory
+      - ../data/flink-savepoints:/tmp/flink-savepoints-directory
     networks:
-      - flink-net
+      - kafka-net
 
   taskmanager:
-    image: flink:1.11.0-scala_2.11
+    image: flink:1.14.2-scala_2.11-java11
     depends_on:
       - jobmanager
     command: "taskmanager.sh start-foreground"
+    environment:
+      JOB_MANAGER_RPC_ADDRESS: jobmanager
+      FLINK_ENV: cluster
     volumes:
       - ../build/libs:/opt/flink/usrlib
       - ../conf/flink:/opt/flink/conf
-      - flink-checkpoints-directory:/tmp/flink-checkpoints-directory
-      - /tmp/flink-savepoints-directory:/tmp/flink-savepoints-directory
+      - ../data/flink/checkpoints:/tmp/flink-checkpoints-directory
+      - ../data/flink-savepoints:/tmp/flink-savepoints-directory
     networks:
-      - flink-net
+      - kafka-net
 

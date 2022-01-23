@@ -1,9 +1,8 @@
 version: '3.8'
 
 networks:
-  flink-net:
+  kafka-net:
     external: true
-
 
 services:
   grafana:
@@ -17,12 +16,13 @@ services:
       - elasticsearch
     volumes:
       - ../conf/grafana/provisioning/:/etc/grafana/provisioning/
+      - ../data/grafana:/var/lib/grafana
     networks:
-      - flink-net
+      - kafka-net
 
 
   logstash:
-    image: logstash:7.9.2
+    image: logstash:7.12.0
     volumes:
       - ../conf/logstash/logstash.conf:/config-dir/logstash.conf
     restart: always
@@ -33,12 +33,12 @@ services:
     environment:
       LS_JAVA_OPTS: "-Xmx256m -Xms256m"
     networks:
-      - flink-net
+      - kafka-net
     depends_on:
       - elasticsearch
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch-oss:7.0.1
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:7.9.2
     hostname: elasticsearch
     environment:
       - discovery.type=single-node
@@ -55,7 +55,7 @@ services:
       - '9200:9200'
       - '9300:9300'
     networks:
-      - flink-net
+      - kafka-net
 
   cerebro:
     image: lmenezes/cerebro:latest
@@ -69,7 +69,7 @@ services:
     depends_on:
       - elasticsearch
     networks:
-      - flink-net
+      - kafka-net
 
 
   dejavu:
@@ -80,4 +80,4 @@ services:
     depends_on:
       - elasticsearch
     networks:
-      - flink-net
+      - kafka-net
