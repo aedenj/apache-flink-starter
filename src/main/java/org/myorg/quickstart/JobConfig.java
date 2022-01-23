@@ -25,7 +25,6 @@ final class JobConfig {
 
     static public JobConfig create() {
         final Config appConfig = ConfigFactory.load();
-        System.out.println("HELP: " + "application." + System.getenv("FLINK_ENV") + ".conf");
         final Config envConfig = ConfigFactory.load(
                 "application." + System.getenv("FLINK_ENV") + ".conf"
         );
