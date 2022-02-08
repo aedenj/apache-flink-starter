@@ -10,7 +10,7 @@ import com.typesafe.config.ConfigFactory;
 
 
 final class JobConfig {
-    private Config config;
+    private final Config config;
 
     private JobConfig(final Config config) {
         this.config = config;
@@ -22,7 +22,7 @@ final class JobConfig {
         config.checkValid(ConfigFactory.defaultReference());
     }
 
-    static public JobConfig create() {
+    public static JobConfig create() {
         final Config appConfig = ConfigFactory.load();
         final Config envConfig = ConfigFactory.load(
                 "application." + System.getenv("FLINK_ENV") + ".conf"
